@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Busca de Bens</title>
+    <script>
+        function fetchChapaData() {
+            const chapa = document.getElementById('chapa-input').value;
+
+            if (chapa) {
+                // Fazer requisição ao PHP
+                fetch(`pesquisa.php?chapa=${chapa}`)
+                    .then(response => response.json()) // Tenta parsear a resposta como JSON
+                    .then(data => {
+                        // Limpar tabela
+                        const tableBody = document.querySelector("#data-table tbody");
+                        tableBody.innerHTML = "";
+
+                        // Verifica se há um erro na resposta
+                        if (data.error) {
+                            alert(data.error); // Exibe a mensagem de erro
+                        } else {
+                            // Adiciona os dados retornados à tabela
+                            const tr = document.createElement("tr");
+                            tr.innerHTML = `
+                                <td>${data.chapa}</td>
+                                <td>${data['Data Aquisição']}</td>
+                                <td>${data['Data Baixa']}</td>
+                                <td>${data.Descrição}</td>
+                                <td>${data.Local}</td>
+                            `;
+                            tableBody.appendChild(tr);
+                        }
+                    })
+                    .catch(error => console.error('Erro ao processar a requisição:', error));
+            } else {
+                alert("Por favor, insira uma chapa válida.");
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Busca de Bens por Chapa</h1>
+
+    <!-- Campo de busca -->
+    <label for="chapa-input">Digite a Chapa:</label>
+    <input type="text" id="chapa-input" placeholder="Insira a chapa">
+    <button onclick="fetchChapaData()">Buscar</button>
+
+    <!-- Tabela para exibir os dados -->
+    <table id="data-table" border="1">
+        <thead>
+            <tr>
+                <th>Chapa</th>
+                <th>Data Aquisição</th>
+                <th>Data Baixa</th>
+                <th>Descrição</th>
+                <th>Local</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</body>
+</html>
